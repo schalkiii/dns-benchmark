@@ -1,5 +1,10 @@
 {
   "title": "DNSPY Dashboard",
+  "nav": {
+    "overview": "Overview",
+    "analyze": "Analyze",
+    "sources": "DNS Sources"
+  },
   "tip": {
     "github": "Project Repository",
     "language": "Switch Language",
@@ -24,7 +29,17 @@
     "back_to_top": "Back to Top",
     "quick_filter": "Quick Filter",
     "manual_select": "Manual Select",
-    "server_type": "Server Type"
+    "server_type": "Server Type",
+    "no_data": "No data available. Please upload or load sample data first.",
+    "click_to_copy": "Click to copy server address",
+    "sort_asc": "Click to sort ascending",
+    "sort_desc": "Click to sort descending",
+    "comparing": "Comparing servers",
+    "remove": "Remove",
+    "type_udp": "UDP",
+    "type_doh": "DNS over HTTPS",
+    "type_dot": "DNS over TLS",
+    "type_doq": "DNS over QUIC"
   },
   "button": {
     "upload": "Read and Analyze",
@@ -49,5 +64,60 @@
     "europe": "Europe",
     "china": "China",
     "global": "CDN"
+  },
+  "overview": {
+    "title": "Overview",
+    "total_servers": "Total Servers",
+    "total_servers_desc": "DNS servers tested",
+    "avg_score": "Average Score",
+    "avg_score_desc": "Overall performance score",
+    "avg_latency": "Average Latency",
+    "avg_latency_desc": "Average response time (ms)",
+    "total_queries": "Total Queries",
+    "total_queries_desc": "Queries sent during benchmark",
+    "server_type_distribution": "Server Type Distribution",
+    "top_servers": "Top 10 Best Performing Servers",
+    "region_distribution": "Region Distribution",
+    "insights_title": "Insights & Analysis",
+    "insight_servers_count": "Total of {{count}} DNS servers were tested across {{regions}} different regions.",
+    "insight_top_score": "The highest score is {{score}} achieved by {{server}}.",
+    "insight_avg_score": "The average score across all servers is {{score}}.",
+    "insight_fastest_latency": "The fastest average latency is {{latency}}ms from {{server}}.",
+    "insight_type_distribution": "UDP servers account for {{percent}}% of all servers tested.",
+    "insight_doh_percent": "DoH (DNS over HTTPS) servers account for {{percent}}%.",
+    "insight_top_region": "The region with the most servers is {{region}} with {{count}} servers."
+  },
+  "table": {
+    "server": "Server",
+    "ip": "IP Address",
+    "geo": "Location",
+    "score": "Score",
+    "latency": "Latency (ms)",
+    "success_rate": "Success Rate (%)",
+    "qps": "QPS",
+    "type": "Type",
+    "sort_by": "Sort by",
+    "filter_type": "Filter by type",
+    "compare": "Compare"
+  },
+  "sources": {
+    "title": "DNS Sources",
+    "description": "All DNS providers from the test results, grouped by protocol type",
+    "type_udp": "UDP Servers",
+    "type_doh": "DoH Servers (DNS over HTTPS)",
+    "type_dot": "DoT Servers (DNS over TLS)",
+    "type_doq": "DoQ Servers (DNS over QUIC)",
+    "provider_count": "{{count}} servers",
+    "no_providers": "No servers found for this type",
+    "ip_address": "IP Address",
+    "location": "Location",
+    "score": "Score",
+    "latency": "Latency"
+  },
+  "footer": {
+    "description": "A powerful DNS benchmark analysis tool for visualizing and comparing DNS server performance.",
+    "powered_by": "Powered by DNSPY",
+    "github": "GitHub Repository",
+    "copyright": "DNSPY Dashboard"
   }
 }

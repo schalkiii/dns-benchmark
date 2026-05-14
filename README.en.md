@@ -1,171 +1,282 @@
-# dnspy - DNS Server Performance Testing Tool
+# DNSPY - DNS Server Benchmark & Visual Analysis Tool
+
+[![Go Version](https://img.shields.io/badge/Go-1.23%2B-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/xxnuo/dns-benchmark?style=flat&logo=github)](https://github.com/xxnuo/dns-benchmark/releases)
 
 [English](./README.en.md) | [中文](./README.md)
 
-## Project Overview
+> A cross-platform DNS server benchmarking tool with 1000+ built-in global DNS servers, supporting UDP/DoH/DoT/DoQ protocols, featuring a modern web-based visual analysis dashboard.
 
-DNS services in many regions are often hijacked by ISPs, injecting various advertisements and causing privacy concerns. To ensure a safe and reliable internet experience, we need to find trustworthy DNS services.
+---
 
-There are not many similar tools available. The well-known DNSJumper only supports Windows and has limitations such as limited data sources and single evaluation dimensions.
+## Table of Contents
 
-Therefore, we developed this tool to test available DNS servers and their performance in your local network environment. This tool is written in Golang and supports cross-platform use on Windows, macOS, and Linux.
+- [Overview](#overview)
+- [Features](#features)
+- [Quick Start](#quick-start)
+  - [Download](#1-download)
+  - [Run Tests](#2-run-tests)
+  - [View Results](#3-view-results)
+- [Web Dashboard](#web-dashboard)
+  - [Overview Page](#overview-page)
+  - [Data Analysis](#data-analysis)
+  - [DNS Sources](#dns-sources)
+- [Command Line Options](#command-line-options)
+- [Scoring System](#scoring-system)
+- [Built-in DNS Servers](#built-in-dns-servers)
+- [Build Guide](#build-guide)
+- [Architecture](#architecture)
+- [License](#license)
 
-Additionally, we provide a visual data analysis dashboard that allows you to easily understand which DNS servers are available 😊
+---
 
-**Pro Tip**: Click on the bar charts in the data analysis dashboard to copy server addresses.
+## Overview
 
-**Usage Flow**: Follow the guide below to download the testing tool and obtain a JSON file with test results, then open the data analysis dashboard website to upload and analyze the data. The website does not store any data.
+DNS services in many regions are often hijacked by ISPs, injecting advertisements and raising privacy concerns. To ensure a safe and reliable internet experience, we need trustworthy DNS services.
 
-## Data Analysis Dashboard Preview
+**DNSPY** is a DNS server benchmarking tool written in Go that can:
 
-![Data Analysis Dashboard Preview](https://github.com/user-attachments/assets/c743f7ba-4d77-4d16-8515-02c0dc99ddfa)
+- Test available DNS servers and their performance in your local network environment
+- Run cross-platform on Windows, macOS, and Linux
+- Provide an intuitive web-based visual analysis dashboard
+- Include 1000+ built-in global DNS servers (UDP, DoH, DoT, DoQ)
 
-[Data Analysis Dashboard (with Sample Data)](https://bench.dash.2020818.xyz)
+## Features
 
-## Usage
+### Core Features
 
-![dnspy](https://github.com/user-attachments/assets/a499d2fc-ffcd-4b71-a0dd-d6e5839792dd)
+- **Multi-Protocol Support** — Test plain UDP DNS, DNS-over-HTTPS (DoH), DNS-over-TLS (DoT), and DNS-over-QUIC (DoQ)
+- **Global Coverage** — 1000+ built-in DNS servers from around the world
+- **Concurrent Testing** — Customizable concurrency for faster testing
+- **Smart Scoring** — Multi-dimensional scoring based on success rate, latency, QPS, and more
+- **GeoIP Location** — Automatically identify DNS server geographic locations
+- **Flexible Configuration** — Custom test domains, server lists, test duration, and more
 
-### 1. Download the Tool
+### Dashboard Features
 
-From the [releases](https://github.com/xxnuo/dns-benchmark/releases) page of this repository, download the corresponding `dnspy-*` file according to your system architecture.
+- **Overview Dashboard** — Stats cards, server type distribution, Top 10 ranking, region distribution, smart insights
+- **Multi-Dimensional Analysis** — Charts for total score, latency, success rate, and QPS with region and protocol filtering
+- **Data Table** — Sortable, searchable, filterable detailed data table
+- **DNS Source Browser** — DNS servers grouped by protocol type
+- **i18n Support** — Chinese and English interfaces
+- **Dark/Light Theme** — Light and dark mode with system theme detection
 
-For example: macOS users with M-series processors should download the `dnspy-darwin-arm64` file.
+## Quick Start
 
-### 2. Prepare Testing Environment
+### 1. Download
 
-**Important Notice**: You must disable all proxy software's Tun mode and virtual network card mode, otherwise it will severely affect the accuracy of test results.
+From the [Releases](https://github.com/xxnuo/dns-benchmark/releases) page, download the appropriate `dnspy-*` file for your system:
 
-### 3. Run the Test
+| System | File |
+|--------|------|
+| macOS (Intel) | `dnspy-darwin-amd64` |
+| macOS (Apple Silicon) | `dnspy-darwin-arm64` |
+| Linux (x86_64) | `dnspy-linux-amd64` |
+| Linux (ARM64) | `dnspy-linux-arm64` |
+| Windows (x86_64) | `dnspy-windows-amd64.exe` |
+| Windows (ARM64) | `dnspy-windows-arm64.exe` |
 
-Rename the downloaded file to `dnspy` (`dnspy.exe` on Windows), open a terminal, navigate to the directory containing the file, and execute the following commands:
+### 2. Run Tests
+
+**Important**: Disable all proxy software's Tun mode and virtual network card mode, otherwise test results will be severely affected.
+
+Rename the downloaded file to `dnspy` (`dnspy.exe` on Windows), then run:
 
 ```bash
+# Ensure no proxy environment variables
 unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
+
+# Run tests (uses built-in 1000+ DNS servers and 10000 popular domains)
 ./dnspy
 ```
 
-Follow the prompts to start testing.
+Press `y` when prompted to confirm using the built-in DNS server list, and testing will begin.
 
-### 4. Testing Instructions
+### 3. View Results
 
-The program uses multi-threading mode by default to speed up testing.
+After testing completes, results are saved to a JSON file (e.g., `dnspy_result_2024-11-07-17-32-13.json`).
 
-> **Performance Requirements**: The default parameters (10 threads) require at least 1 MB/s network bandwidth (both upload and download) and at least a 4-core processor.
->
-> If your network or processor performance is insufficient, it may lead to inaccurate test results. It is recommended to reduce the number of threads using the `-w` parameter.
+Press `Y` or Enter when prompted to automatically open the web dashboard.
 
-After the test is complete, the results will be output to the current directory with a filename format like `dnspy_result_2024-11-07-17-32-13.json`.
+You can also view results anytime:
 
-### 5. View Results
+```bash
+# Option 1: Open a previous result with dnspy
+./dnspy dnspy_result_2024-11-07-17-32-13.json
 
-Following the program prompt, enter `Y` or `y` or simply press Enter, and the program will automatically open the data analysis dashboard website. Click the "Read Analysis" button in the upper right corner of the website, select the JSON file just generated, and you can view the visualized test results.
+# Option 2: Open the web dashboard directly and upload the JSON file
+# Visit https://bench.dash.2020818.xyz
+```
 
-## Available Parameters
+## Web Dashboard
+
+The web dashboard provides three main pages:
+
+### Overview Page
+
+After uploading test results, the overview page automatically displays:
+
+- **Stats Cards** — Total servers, average score, average latency, total queries
+- **Server Type Distribution** — UDP/DoH/DoT/DoQ donut chart
+- **Top 10 Ranking** — Highest-scoring servers
+- **Region Distribution** — Servers grouped by geographic location
+- **Smart Insights** — Auto-generated data insights including top score, fastest latency, type distribution
+
+### Data Analysis
+
+Four-dimensional bar chart analysis:
+
+| Dimension | Description |
+|-----------|-------------|
+| Total Score | Overall performance (0-100), higher is better |
+| Average Latency | Response time (ms), lower is better |
+| Success Rate | Successful resolution ratio (%), higher is better |
+| QPS | Queries Per Second, higher is better |
+
+Supports filtering by region and protocol type, pagination, and click-to-copy server addresses.
+
+### DNS Sources
+
+All tested DNS servers grouped by UDP, DoH, DoT, and DoQ protocols, with IP addresses, geographic locations, scores, and latency details.
+
+## Command Line Options
 
 ```bash
 ~> dnspy -h
 
 Usage Examples:
 
-  dnspy
-    Start testing directly using built-in world domains
+  dnspy                                          Start testing with built-in DNS servers
+  dnspy -s 114.114.114.114                       Test a single server
+  dnspy dnspy_result_2024-10-22-08-18.json       Visualize test results
 
-  dnspy -s 114.114.114.114
-    Test a single server
-
-  dnspy dnspy_benchmark_2024-10-22-08-18.json
-    Visualize and analyze test results
-
-Parameter Description:
-  -c, --concurrency int   Number of concurrent queries per test
-                          (default 10)
-
-  -d, --domains string    File path storing domain names for batch testing
-                          Must be a file path relative to current program working directory
-                          File format: one domain per line
-                          If not modified, uses built-in 10000 popular domains
-                          (default "@sampleDomains@")
-
-  -t, --duration int      Duration of each test in seconds
-                          (default 10)
-
-  -f, --file string       File path storing server data for batch testing
-                          Must be a file path relative to current program working directory
-                          File format: one server address per line
-
-  -g, --geo string        Independent feature: Query IP or domain geolocation using GeoIP database
-
-      --json              Output logs in JSON format
-
-  -l, --level string      Log level
-                          Options: debug, info, warn, error, fatal, panic
-                          (default "info")
-
-      --no-aaaa           Do not resolve AAAA records for each test (no IPv6 testing)
-
-      --old-html          Deprecated, not recommended
-                          Recommended new way: Program outputs data JSON file first, follow prompts to view visual analysis
-                          Next time you need to view, directly open JSON file with the program
-                          This parameter uses the old way to output a single HTML file to the same directory as data JSON
-                          Can be opened by double-clicking
-
-  -o, --output string     Output file path for results
-                          Must be a file path relative to current program working directory
-                          If not specified, outputs to dnspy_result_<current time>.json in current working directory
-
-      --prefer-ipv4       Prefer IPv4 addresses when converting DNS server domain names to IP addresses
-                          (default true)
-
-  -s, --server strings    Manually specify server(s) to test, supports multiple
-
-  -w, --worker int        Number of DNS servers to test simultaneously
-                          (default 20)
+Options:
+  -c, --concurrency int       Concurrency per test (default 10)
+  -d, --domains string        Domain data file path (default: built-in 10000 domains)
+  -t, --duration int          Test duration in seconds (default 10)
+  -f, --file string           Server list file path
+  -g, --geo string            GeoIP lookup
+      --json                  Output logs in JSON format
+  -l, --level string          Log level (default "info")
+      --no-aaaa               Skip IPv6 (AAAA record) testing
+      --old-html              Deprecated, use old HTML output
+  -o, --output string         Output file path
+      --prefer-ipv4           Prefer IPv4 (default true)
+  -s, --server strings        Manually specify server(s) to test
+  -w, --worker int            Number of servers to test simultaneously (default 20)
 ```
 
-## Compilation
+## Scoring System
 
-### Compilation Environment Requirements
+DNSPY uses a multi-dimensional weighted scoring system:
 
-- You need `Go` environment and `curl` command on your computer
-- Preferably have `make` command, otherwise you may need to manually execute contents in `Makefile`
-- Ability to access GitHub to download resource files
-- If you encounter the following issue on Windows, please use `Git Bash` to execute commands instead
+| Dimension | Weight | Description |
+|-----------|--------|-------------|
+| Success Rate | 35% | Ratio of successful responses to total requests |
+| Error Rate | 10% | Ratio of errors and IO errors to total requests |
+| Latency | 50% | Combined mean and median latency with stability factor |
+| QPS | 5% | Queries per second using logarithmic mapping |
 
-```
-'GOOS' is not recognized as an internal or external command,
-operable program or batch file.
-```
+Scores range from 0-100, with higher scores indicating better overall performance.
 
-### Compilation Steps
+## Built-in DNS Servers
 
-#### 1. Clone This Repository
+The project includes **1000+** DNS servers covering:
+
+- **UDP DNS** — Traditional DNS servers (e.g., 114.114.114.114, 8.8.8.8, 1.1.1.1)
+- **DoH (DNS over HTTPS)** — Encrypted DNS queries (e.g., Cloudflare, Google, NextDNS, AdGuard)
+- **DoT (DNS over TLS)** — TLS encrypted DNS (e.g., Quad9, CleanBrowsing, Mullvad)
+- **DoQ (DNS over QUIC)** — QUIC protocol DNS (e.g., AdGuard, Control D)
+
+Data sources include [KnowledgeBaseDNS](https://kb.dns.se/), [curl/wiki/DNS-over-HTTPS](https://github.com/curl/curl/wiki/DNS-over-HTTPS), and more.
+
+## Build Guide
+
+### Prerequisites
+
+- Go 1.23+
+- curl
+- make (optional)
+
+### Build Steps
 
 ```bash
+# 1. Clone repository
 git clone https://github.com/xxnuo/dns-benchmark.git
 cd dns-benchmark/dnspy
-```
 
-#### 2. Update Data Files (Optional)
-
-```bash
+# 2. Update data files (optional)
 make update
-```
 
-#### 3. Configure Dependencies
-
-```bash
+# 3. Configure dependencies
 make configuration
-```
 
-#### 4. Build
-
-```bash
+# 4. Build
 make build
 ```
 
-After compilation is complete, the generated executable file will be located in the current directory.
+After compilation, executable files for each platform will be generated in the current directory.
+
+### Web Dashboard Development
+
+```bash
+cd web
+pnpm install
+pnpm dev     # Start development server
+pnpm build   # Build for production
+```
+
+## Architecture
+
+```
+dnspy/
+├── main.go              # Entry point
+├── config.go            # Configuration & CLI argument parsing
+├── runner.go            # Test executor (invokes dnspyre)
+├── rank.go              # Scoring system
+├── geo.go               # GeoIP location lookup
+├── jsonreporter.go      # JSON result format definition
+├── utils.go             # Utility functions
+├── tools.go             # Helper tools
+├── log.go               # Logging system
+├── res/                 # Resource files
+│   ├── providers.txt    # DNS server list (1000+)
+│   ├── domains.txt      # Test domain list (10000+)
+│   ├── Country.mmdb     # GeoIP database
+│   └── template.html    # HTML output template (legacy)
+├── web/                 # Web dashboard
+│   └── src/
+│       ├── components/  # React components
+│       ├── pages/       # Pages
+│       ├── contexts/    # State management
+│       ├── locales/     # Internationalization
+│       └── utils.js     # Utility functions
+└── scripts/             # Helper scripts
+```
+
+### Tech Stack
+
+**Backend (Testing Tool)**
+- [Go](https://golang.org/) — High-performance compiled language
+- [dnspyre](https://github.com/Tantalor93/dnspyre) — DNS benchmarking engine
+- [geoip2-golang](https://github.com/oschwald/geoip2-golang) — GeoIP database reader
+- [pflag](https://github.com/spf13/pflag) — CLI argument parsing
+- [logrus](https://github.com/sirupsen/logrus) — Structured logging
+
+**Frontend (Dashboard)**
+- [React 18](https://react.dev/) — UI framework
+- [NextUI](https://nextui.org/) — React component library
+- [TailwindCSS](https://tailwindcss.com/) — CSS framework
+- [Chart.js](https://www.chartjs.org/) — Data visualization
+- [Framer Motion](https://www.framer.com/motion/) — Animation engine
+- [react-i18next](https://react.i18next.com/) — Internationalization
+- [Rsbuild](https://rsbuild.dev/) — Build tool
 
 ## License
 
 This project is open source. Contributions and suggestions are welcome.
+
+---
+
+**DNSPY** — Making DNS benchmarking simple and powerful.

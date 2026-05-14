@@ -1,171 +1,282 @@
-# dnspy - DNS 服务器的可访问性和性能测试工具
+# DNSPY - DNS 服务器基准测试与可视化分析工具
+
+[![Go Version](https://img.shields.io/badge/Go-1.23%2B-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/xxnuo/dns-benchmark?style=flat&logo=github)](https://github.com/xxnuo/dns-benchmark/releases)
 
 [English](./README.en.md) | [中文](./README.md)
+
+> 跨平台 DNS 服务器性能测试工具，内置 1000+ 全球 DNS 服务器，支持 UDP/DoH/DoT/DoQ 协议测试，并提供现代化的 Web 可视化分析面板。
+
+---
+
+## 目录
+
+- [项目简介](#项目简介)
+- [功能特性](#功能特性)
+- [快速开始](#快速开始)
+  - [下载工具](#1-下载工具)
+  - [运行测试](#2-运行测试)
+  - [查看结果](#3-查看结果)
+- [Web 可视化面板](#web-可视化面板)
+  - [概览页面](#概览页面)
+  - [数据分析](#数据分析)
+  - [DNS 源浏览](#dns-源浏览)
+- [命令行参数](#命令行参数)
+- [评分系统](#评分系统)
+- [内置 DNS 服务器](#内置-dns-服务器)
+- [编译指南](#编译指南)
+- [技术架构](#技术架构)
+- [许可证](#许可证)
+
+---
 
 ## 项目简介
 
 国内 DNS 服务常遭运营商劫持，被插入各种广告，同时存在隐私泄露风险。为了保障安全可靠的上网体验，我们需要寻找值得信赖的 DNS 服务。
 
-现有的同类工具并不多，较为知名的 DNSJumper 仅支持 Windows 平台，且存在数据源较少、评测维度单一等问题。
+**DNSPY** 是一款用 Go 语言编写的 DNS 服务器基准测试工具，它能够：
 
-因此开发了这款工具，用于测试本地网络环境下可用的 DNS 服务器及其性能表现。该工具使用 Golang 编写，跨平台支持 Windows、macOS、Linux。
+- 测试本地网络环境下可用的 DNS 服务器及其性能表现
+- 支持跨平台运行（Windows、macOS、Linux）
+- 提供直观的 Web 可视化分析面板
+- 内置 1000+ 全球 DNS 服务器（包括 UDP、DoH、DoT、DoQ）
 
-并且配套提供可视化数据分析面板，让您一目了然地了解可用的 DNS 服务器 😊
+## 功能特性
 
-**温馨提示**：点击数据分析面板中的柱状图即可复制服务器地址。
+### 核心功能
 
-**使用流程**：按照下文指导下载测试工具并获得测试结果的 JSON 文件，然后打开数据分析面板网站上传数据即可分析。网站不存储任何数据。
+- **多协议支持** — 测试普通 UDP DNS、DNS-over-HTTPS (DoH)、DNS-over-TLS (DoT)、DNS-over-QUIC (DoQ)
+- **全球覆盖** — 内置 1000+ 个来自全球各地的 DNS 服务器
+- **多线程并发** — 支持自定义并发数，大幅提升测试速度
+- **智能评分** — 基于成功率、延迟、QPS 等多维度综合评分
+- **GeoIP 定位** — 自动识别 DNS 服务器的地理位置
+- **灵活配置** — 支持自定义测试域名、服务器列表、测试时长等
 
-## 数据分析面板预览
+### 可视化面板
 
-![数据分析面板预览](https://github.com/user-attachments/assets/c743f7ba-4d77-4d16-8515-02c0dc99ddfa)
+- **概览仪表盘** — 统计数据卡片、服务器类型分布、Top 10 排名、地区分布、智能分析
+- **多维分析** — 总分、延迟、成功率、QPS 四种维度图表，支持地区筛选和服务器类型筛选
+- **数据表格** — 可排序、可搜索、可按类型筛选的详细数据表格
+- **DNS 源浏览** — 按协议类型分组的 DNS 服务器列表
+- **中英文切换** — 支持中文和英文界面
+- **明暗主题** — 支持亮色/暗色模式，跟随系统主题
 
-[数据分析面板（内含示例数据）](https://bench.dash.2020818.xyz)
-
-## 使用方式
-
-![dnspy](https://github.com/user-attachments/assets/a499d2fc-ffcd-4b71-a0dd-d6e5839792dd)
+## 快速开始
 
 ### 1. 下载工具
 
-在本仓库的 [releases](https://github.com/xxnuo/dns-benchmark/releases) 页面中，根据您的系统架构下载对应的 `dnspy-*` 文件。
+在 [Releases](https://github.com/xxnuo/dns-benchmark/releases) 页面中，根据您的系统架构下载对应的 `dnspy-*` 文件：
 
-例如：M 系列处理器的 macOS 用户应下载 `dnspy-darwin-arm64` 文件。
+| 系统 | 文件名 |
+|------|--------|
+| macOS (Intel) | `dnspy-darwin-amd64` |
+| macOS (Apple Silicon) | `dnspy-darwin-arm64` |
+| Linux (x86_64) | `dnspy-linux-amd64` |
+| Linux (ARM64) | `dnspy-linux-arm64` |
+| Windows (x86_64) | `dnspy-windows-amd64.exe` |
+| Windows (ARM64) | `dnspy-windows-arm64.exe` |
 
-### 2. 准备测试环境
+### 2. 运行测试
 
-**重要提示**：必须关闭所有代理软件的 Tun 模式、虚拟网卡模式，否则会严重影响测试结果的准确性。
+**重要提示**：必须关闭所有代理软件的 Tun 模式和虚拟网卡模式，否则会严重影响测试结果的准确性。
 
-### 3. 运行测试
-
-将下载的文件重命名为 `dnspy`（Windows 系统为 `dnspy.exe`），然后打开终端，切换到该文件所在的目录，执行以下命令：
+将下载的文件重命名为 `dnspy`（Windows 系统为 `dnspy.exe`），然后执行：
 
 ```bash
+# 确保没有代理环境变量
 unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
+
+# 运行测试（将使用内置的 1000+ DNS 服务器和 10000 个热门域名）
 ./dnspy
 ```
 
-按照提示输入即可开始测试。
+按提示输入 `y` 确认使用内置 DNS 服务器列表，即可开始测试。
 
-### 4. 测试说明
+### 3. 查看结果
 
-程序默认使用多线程模式以加快测试速度。
+测试完成后，结果将输出到当前目录下的 JSON 文件（如 `dnspy_result_2024-11-07-17-32-13.json`）。
 
-> **性能要求**：默认参数（10 个线程）需要至少上下行 1 MB/s 的网络带宽和至少 4 核心处理器。
->
-> 如果网络或处理器性能不足，可能导致测试结果不准确，建议通过 `-w` 参数降低线程数。
+按程序提示输入 `Y` 或直接按回车键，程序将自动打开 Web 可视化面板。
 
-测试完成后，结果将输出到当前目录下，文件名格式为 `dnspy_result_2024-11-07-17-32-13.json`。
+您也可以随时通过以下方式查看：
 
-### 5. 查看结果
+```bash
+# 方式一：用 dnspy 打开之前的测试结果
+./dnspy dnspy_result_2024-11-07-17-32-13.json
 
-按程序提示输入 `Y` 或 `y` 或直接按回车键，程序将自动打开数据分析面板网站。点击网站右上角的"读取分析"按钮，选择刚生成的 JSON 文件，即可查看可视化测试结果。
+# 方式二：直接打开 Web 面板并上传 JSON 文件
+# 打开 https://bench.dash.2020818.xyz
+```
 
-## 可用参数
+## Web 可视化面板
+
+Web 可视化面板提供了三个主要页面：
+
+### 概览页面
+
+上传测试结果后，概览页面自动展示：
+
+- **统计卡片** — 服务器总数、平均评分、平均延迟、总查询数
+- **服务器类型分布** — UDP/DoH/DoT/DoQ 占比环形图
+- **Top 10 排名** — 综合评分最高的 10 个服务器
+- **地区分布** — 按地理位置分布的服务器数量
+- **智能分析** — 自动生成的数据洞察，包括最高分、最快延迟、类型占比等
+
+### 数据分析
+
+提供四种维度的柱状图分析：
+
+| 维度 | 说明 |
+|------|------|
+| 总分 | 综合表现评分（0-100），越高越好 |
+| 平均延迟 | 响应时间（ms），越低越好 |
+| 成功率 | 成功解析比例（%），越高越好 |
+| QPS | 每秒查询数，越高越好 |
+
+支持按地区筛选、按协议类型筛选、分页浏览，点击柱状图可复制服务器地址。
+
+### DNS 源浏览
+
+按 UDP、DoH、DoT、DoQ 四种协议类型分组展示所有测试过的 DNS 服务器，包含 IP 地址、地理位置、评分、延迟等详细信息。
+
+## 命令行参数
 
 ```bash
 ~> dnspy -h
 
 使用示例:
 
-  dnspy
-    使用内置的世界所有域名直接启动测试
-
-  dnspy -s 114.114.114.114
-    测试单个服务器
-
-  dnspy dnspy_benchmark_2024-10-22-08-18.json
-    对测试结果进行可视化分析
+  dnspy                                          使用内置的所有 DNS 服务器直接启动测试
+  dnspy -s 114.114.114.114                       测试单个服务器
+  dnspy dnspy_result_2024-10-22-08-18.json       对测试结果进行可视化分析
 
 参数说明:
-  -c, --concurrency int   每个测试的并发数
-                          (默认 10)
-
-  -d, --domains string    要批量测试的域名数据存储的文件路径
-                          必须是相对当前程序工作路径的文件路径
-                          文件内部格式为每行一条域名
-                          不修改则使用内置的 10000 个热门域名
-                          (默认 "@sampleDomains@")
-
-  -t, --duration int      每个测试的持续时间，单位：秒
-                          (默认 10)
-
-  -f, --file string       要批量测试的服务器数据存储的文件路径
-                          必须是相对当前程序工作路径的文件路径
-                          文件内部格式为每行一条服务器地址
-
-  -g, --geo string        独立功能：使用 GeoIP 数据库进行 IP 或域名归属地查询
-
-      --json              以 JSON 格式输出日志
-
-  -l, --level string      日志级别
-                          可选：debug、info、warn、error、fatal、panic
-                          (默认 "info")
-
-      --no-aaaa           每个测试不解析 AAAA 记录（不测试 IPv6）
-
-      --old-html          已弃用，不建议使用
-                          建议改用新方式：程序先输出数据 JSON 文件，按提示查看可视化分析
-                          下次需要查看时，直接用程序打开 JSON 文件
-                          本参数使用旧版方式输出单个 HTML 文件到数据 JSON 同目录
-                          可双击打开查看
-
-  -o, --output string     输出结果的文件路径
-                          必须是相对当前程序工作路径的文件路径
-                          不指定则输出到当前工作路径下的 dnspy_result_<当前时间>.json
-
-      --prefer-ipv4       在 DNS 服务器的域名转换为 IP 地址过程中优先使用 IPv4 地址
-                          (默认 true)
-
-  -s, --server strings    手动指定要测试的服务器，支持多个
-
-  -w, --worker int        同一时间测试多少个 DNS 服务器
-                          (默认 20)
+  -c, --concurrency int       每个测试的并发数 (默认 10)
+  -d, --domains string        域名数据文件路径 (默认使用内置的 10000 个热门域名)
+  -t, --duration int          每个测试持续时间，单位秒 (默认 10)
+  -f, --file string           服务器列表文件路径
+  -g, --geo string            GeoIP 归属地查询
+      --json                  以 JSON 格式输出日志
+  -l, --level string          日志级别 (默认 "info")
+      --no-aaaa               不测试 IPv6 (AAAA 记录)
+      --old-html              已弃用，使用旧版 HTML 输出
+  -o, --output string         输出文件路径
+      --prefer-ipv4           优先使用 IPv4 (默认 true)
+  -s, --server strings        手动指定要测试的服务器
+  -w, --worker int            同时测试的服务器数量 (默认 20)
 ```
 
-## 编译
+## 评分系统
 
-### 编译环境要求
+DNSPY 使用多维度加权评分系统对 DNS 服务器进行综合评估：
 
-- 你的电脑上需要有 `Go` 环境、`curl` 命令
-- 最好有 `make` 命令，否则可能需要手动执行 `Makefile` 中的内容
-- 能够访问 GitHub 下载资源文件
-- 如果在 Windows 下出现以下问题，请改用 `Git Bash` 执行命令
+| 维度 | 权重 | 说明 |
+|------|------|------|
+| 成功率 | 35% | 成功响应次数占总请求次数的比例 |
+| 错误率 | 10% | 错误响应和 IO 错误占总请求次数的比例 |
+| 延迟 | 50% | 综合平均延迟和中位数延迟，考虑稳定性 |
+| QPS | 5% | 每秒查询数，使用对数函数映射 |
 
-```
-'GOOS' is not recognized as an internal or external command,
-operable program or batch file.
-```
+评分范围 0-100 分，分数越高代表综合性能越好。
+
+## 内置 DNS 服务器
+
+项目内置了 **1000+** 个 DNS 服务器，涵盖：
+
+- **UDP DNS** — 传统 DNS 服务器（如 114.114.114.114、8.8.8.8、1.1.1.1）
+- **DoH (DNS over HTTPS)** — 加密 DNS 查询（如 Cloudflare、Google、NextDNS、AdGuard）
+- **DoT (DNS over TLS)** — TLS 加密 DNS（如 Quad9、CleanBrowsing、Mullvad）
+- **DoQ (DNS over QUIC)** — QUIC 协议 DNS（如 AdGuard、Control D）
+
+数据来源包括 [KnowledgeBaseDNS](https://kb.dns.se/)、[curl/wiki/DNS-over-HTTPS](https://github.com/curl/curl/wiki/DNS-over-HTTPS) 等。
+
+## 编译指南
+
+### 环境要求
+
+- Go 1.23+
+- curl
+- make（可选）
 
 ### 编译步骤
 
-#### 1. 克隆本仓库
-
 ```bash
+# 1. 克隆仓库
 git clone https://github.com/xxnuo/dns-benchmark.git
 cd dns-benchmark/dnspy
-```
 
-#### 2. 更新数据文件（可选）
-
-```bash
+# 2. 更新数据文件（可选）
 make update
-```
 
-#### 3. 配置依赖
-
-```bash
+# 3. 配置依赖
 make configuration
-```
 
-#### 4. 进行编译
-
-```bash
+# 4. 编译
 make build
 ```
 
-编译完成后，生成的可执行文件将位于当前目录下。
+编译完成后，将在当前目录生成各平台的可执行文件。
+
+### Web 面板开发
+
+```bash
+cd web
+pnpm install
+pnpm dev     # 启动开发服务器
+pnpm build   # 构建生产版本
+```
+
+## 技术架构
+
+```
+dnspy/
+├── main.go              # 主程序入口
+├── config.go            # 配置和命令行参数解析
+├── runner.go            # 测试执行器（调用 dnspyre）
+├── rank.go              # 评分系统
+├── geo.go               # GeoIP 地理位置查询
+├── jsonreporter.go      # JSON 结果格式定义
+├── utils.go             # 工具函数
+├── tools.go             # 辅助工具
+├── log.go               # 日志系统
+├── res/                 # 资源文件
+│   ├── providers.txt    # DNS 服务器列表（1000+）
+│   ├── domains.txt      # 测试域名列表（10000+）
+│   ├── Country.mmdb     # GeoIP 数据库
+│   └── template.html    # HTML 输出模板（旧版）
+├── web/                 # Web 可视化面板
+│   └── src/
+│       ├── components/  # React 组件
+│       ├── pages/       # 页面
+│       ├── contexts/    # 状态管理
+│       ├── locales/     # 国际化
+│       └── utils.js     # 工具函数
+└── scripts/             # 辅助脚本
+```
+
+### 技术栈
+
+**后端（测试工具）**
+- [Go](https://golang.org/) — 高性能编译型语言
+- [dnspyre](https://github.com/Tantalor93/dnspyre) — DNS 基准测试引擎
+- [geoip2-golang](https://github.com/oschwald/geoip2-golang) — GeoIP 数据库读取
+- [pflag](https://github.com/spf13/pflag) — 命令行参数解析
+- [logrus](https://github.com/sirupsen/logrus) — 结构化日志
+
+**前端（可视化面板）**
+- [React 18](https://react.dev/) — UI 框架
+- [NextUI](https://nextui.org/) — React 组件库
+- [TailwindCSS](https://tailwindcss.com/) — CSS 框架
+- [Chart.js](https://www.chartjs.org/) — 数据可视化
+- [Framer Motion](https://www.framer.com/motion/) — 动画引擎
+- [react-i18next](https://react.i18next.com/) — 国际化
+- [Rsbuild](https://rsbuild.dev/) — 构建工具
 
 ## 许可证
 
-本项目采用开源许可证，欢迎贡献代码和提出建议。
+本项目采用开源许可证。欢迎贡献代码和提出建议。
+
+---
+
+**DNSPY** — 让 DNS 测试变得简单而强大。

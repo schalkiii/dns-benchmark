@@ -883,7 +883,8 @@ https://dns2.nordvpn.com/dns-query
 https://dnslow.me/dns-query
 https://do-39574-tr.xyz/dns-query
 https://doh-01.spectrum.com/dns-query
-https://doh-2.seby.io/dns-queryhttps://doh-de.blahdns.com/dns-query
+https://doh-2.seby.io/dns-query
+https://doh-de.blahdns.com/dns-query
 https://doh.360.cn/dns-query
 https://doh.cleanbrowsing.org/doh/adult-filter/
 https://doh.cornes.me/dns-query
@@ -1009,4 +1010,12 @@ tls://sandbox.opendns.com
 tls://security-filter-dns.cleanbrowsing.org
 tls://unfiltered.dns.momou.ch
 tls://unicast.censurfridns.dk
+180.76.76.76
+1.2.4.8
+202.98.0.68
+https://doh.pub/dns-query
+4.2.2.1
+4.2.2.2
+199.85.126.10
+199.85.127.10
 
