@@ -118,7 +118,10 @@ export default function ServerTable({ jsonData, onCompare }) {
           className="max-w-[180px]"
           placeholder={t("table.filter_type")}
           selectedKeys={[typeFilter]}
-          onChange={(e) => setTypeFilter(e.target.value)}
+          onSelectionChange={(keys) => {
+            const value = Array.from(keys)[0];
+            if (value) setTypeFilter(value);
+          }}
         >
           <SelectItem key="all">All</SelectItem>
           <SelectItem key="udp">UDP</SelectItem>
