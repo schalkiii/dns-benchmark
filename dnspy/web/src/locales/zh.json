@@ -1,5 +1,10 @@
 {
   "title": "DNSPY 数据可视化面板",
+  "nav": {
+    "overview": "概览",
+    "analyze": "分析",
+    "sources": "DNS 源"
+  },
   "tip": {
     "github": "项目地址",
     "language": "切换语言",
@@ -24,7 +29,17 @@
     "back_to_top": "回到顶部",
     "quick_filter": "快速筛选地区",
     "manual_select": "手动选择地区",
-    "server_type": "服务器类型"
+    "server_type": "服务器类型",
+    "no_data": "暂无数据。请先上传或加载示例数据。",
+    "click_to_copy": "点击复制服务器地址",
+    "sort_asc": "点击升序排序",
+    "sort_desc": "点击降序排序",
+    "comparing": "正在对比",
+    "remove": "移除",
+    "type_udp": "UDP",
+    "type_doh": "DNS over HTTPS",
+    "type_dot": "DNS over TLS",
+    "type_doq": "DNS over QUIC"
   },
   "button": {
     "upload": "读取分析",
@@ -49,5 +64,60 @@
     "europe": "欧洲",
     "china": "中国",
     "global": "CDN"
+  },
+  "overview": {
+    "title": "概览",
+    "total_servers": "总服务器数",
+    "total_servers_desc": "已测试的 DNS 服务器数量",
+    "avg_score": "平均分",
+    "avg_score_desc": "综合性能评分",
+    "avg_latency": "平均延迟",
+    "avg_latency_desc": "平均响应时间 (ms)",
+    "total_queries": "总查询数",
+    "total_queries_desc": "基准测试中发送的查询总数",
+    "server_type_distribution": "服务器类型分布",
+    "top_servers": "Top 10 最佳性能服务器",
+    "region_distribution": "地区分布",
+    "insights_title": "智能分析",
+    "insight_servers_count": "共测试了 {{count}} 个 DNS 服务器，分布在 {{regions}} 个不同地区。",
+    "insight_top_score": "最高分为 {{score}}，由 {{server}} 取得。",
+    "insight_avg_score": "所有服务器的平均分为 {{score}}。",
+    "insight_fastest_latency": "最快平均延迟为 {{latency}}ms，来自 {{server}}。",
+    "insight_type_distribution": "UDP 服务器占所有测试服务器的 {{percent}}%。",
+    "insight_doh_percent": "DoH（DNS over HTTPS）服务器占 {{percent}}%。",
+    "insight_top_region": "服务器数量最多的地区是 {{region}}，共 {{count}} 个服务器。"
+  },
+  "table": {
+    "server": "服务器",
+    "ip": "IP 地址",
+    "geo": "位置",
+    "score": "评分",
+    "latency": "延迟 (ms)",
+    "success_rate": "成功率 (%)",
+    "qps": "QPS",
+    "type": "类型",
+    "sort_by": "排序方式",
+    "filter_type": "按类型筛选",
+    "compare": "对比"
+  },
+  "sources": {
+    "title": "DNS 源",
+    "description": "测试结果中的所有 DNS 提供商，按协议类型分组",
+    "type_udp": "UDP 服务器",
+    "type_doh": "DoH 服务器 (DNS over HTTPS)",
+    "type_dot": "DoT 服务器 (DNS over TLS)",
+    "type_doq": "DoQ 服务器 (DNS over QUIC)",
+    "provider_count": "{{count}} 个服务器",
+    "no_providers": "未找到该类型的服务器",
+    "ip_address": "IP 地址",
+    "location": "位置",
+    "score": "评分",
+    "latency": "延迟"
+  },
+  "footer": {
+    "description": "一款强大的 DNS 基准测试分析工具，用于可视化和比较 DNS 服务器性能。",
+    "powered_by": "由 DNSPY 驱动",
+    "github": "GitHub 仓库",
+    "copyright": "DNSPY 数据面板"
   }
 }

@@ -107,13 +107,9 @@ func InitFlags() (Config, error) {
 
 	if cfg.ServersDataPath == "" && len(cfg.Servers) == 0 {
 		log.Error("你没有指定要测试的服务器数据存储的文件路径或手动输入要测试的服务器")
-		log.Info("是否使用内置的世界 DNS 服务器数据开始测试(服务器很多,需要测试一段时间)? [y/N]")
-		var input string
-		fmt.Scanln(&input)
-		if input == "Y" || input == "y" {
+		if confirmPrompt("是否使用内置的世界 DNS 服务器数据开始测试(服务器很多,需要测试一段时间)? [y/N] ") {
 			cfg.ServersDataPath = "@sampleServers@"
 		} else {
-			// log.Error("没有有效数据,程序退出")
 			return cfg, fmt.Errorf("没有有效数据")
 		}
 	}

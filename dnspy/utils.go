@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-// FormatListFile 格式化列表文件
 func FormatListFile(path string) ([]string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -18,11 +17,10 @@ func FormatListFile(path string) ([]string, error) {
 	return FormatListData(&data)
 }
 
-// FormatListData 格式化列表字节
 func FormatListData(data *[]byte) ([]string, error) {
-	lines := make([]string, 0, 100) // 预分配容量，减少内存分配
+	lines := make([]string, 0, 100)
 	scanner := bufio.NewScanner(bytes.NewReader(*data))
-	scanner.Buffer(make([]byte, 4096), 1048576) // 设置更大的缓冲区
+	scanner.Buffer(make([]byte, 4096), 1048576)
 
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -38,8 +36,14 @@ func FormatListData(data *[]byte) ([]string, error) {
 	return lines, nil
 }
 
-// Round 四舍五入
 func Round(x float64, precision int) float64 {
 	scale := math.Pow10(precision)
 	return math.Round(x*scale) / scale
+}
+
+func confirmPrompt(prompt string) bool {
+	fmt.Print(prompt)
+	var input string
+	fmt.Scanln(&input)
+	return input == "Y" || input == "y" || input == ""
 }
